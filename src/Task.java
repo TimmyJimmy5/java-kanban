@@ -1,44 +1,62 @@
+import java.util.*;
+
 public class Task {
-    protected String taskName;
-    protected String taskDescription;
-    protected TaskStatus taskStatus;
-    protected int taskId;
+    private final String name;
+    private final String description;
+    private TaskStatus status;
+    private int id;
 
-    public Task(int taskId, String taskName, String taskDescription, TaskStatus taskStatus){
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.taskStatus = taskStatus;
-        this.taskId = taskId;
+    public Task(String name, String description, TaskStatus status) {
+        this.description = description;
+        this.name = name;
+        this.status = status;
     }
 
-    public String getTaskDescription() {
-        return taskDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public String getTaskName() {
-        return taskName;
+    public int getId() {
+        return id;
     }
 
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
+    public String getName() {
+        return name;
     }
 
+    public TaskStatus getStatus() {
+        return status;
+    }
 
-    public int getTaskId() {
-        return taskId;
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(description, task.description) && Objects.equals(name, task.name)
+                && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description, id, name, status);
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "taskName='" + taskName + '\'' +
-                ", taskDescription='" + taskDescription + '\'' +
-                ", taskStatus=" + taskStatus +
-                ", taskId=" + taskId +
+                "name='" + name + '\'' +
+                ", ID=" + id +
+                ", description='" + description + '\'' +
+                ", status=" + status +
                 '}';
     }
 }
