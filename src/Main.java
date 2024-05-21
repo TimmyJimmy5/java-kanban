@@ -73,6 +73,25 @@ public class Main {
         subtasksList = (ArrayList<Subtask>) taskManager.getAllSubtasks();
         System.out.println(subtasksList);
         System.out.println(" ");
+
+        taskManager.clearSubtasks();
+
+        System.out.println("Список Эпиков после удаления всех подзадач:");
+        epicsList = (ArrayList<Epic>) taskManager.getAllEpics();
+        System.out.println(epicsList);
+        System.out.println(" ");
+
+        System.out.println("Список Подзадач после удаления всех:");
+        subtasksList = (ArrayList<Subtask>) taskManager.getAllSubtasks();
+        System.out.println(subtasksList);
+        System.out.println(" ");
+
+        taskManager.clearEpics();
+
+        System.out.println("Список Эпиков после удаления всех:");
+        epicsList = (ArrayList<Epic>) taskManager.getAllEpics();
+        System.out.println(epicsList);
+        System.out.println(" ");
     }
 
 }

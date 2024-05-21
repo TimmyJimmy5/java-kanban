@@ -15,6 +15,10 @@ public class Epic extends Task {
         subtaskIds.add(id);
     }
 
+    public void removeSubtasksIds() {
+        subtaskIds.clear();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

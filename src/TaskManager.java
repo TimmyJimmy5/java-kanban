@@ -7,7 +7,7 @@ public class TaskManager {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
 
-    public int globalCounterIncrement() {
+    private int globalCounterIncrement() {
         return counter++;
     }
 
@@ -63,7 +63,7 @@ public class TaskManager {
     public List<Epic> getAllEpics() {
         if (epics.isEmpty()) {
             System.out.println("Крупных задач нет.");
-            return Collections.emptyList();
+            return null;
         }
         return new ArrayList<>(epics.values());
     }
@@ -89,17 +89,18 @@ public class TaskManager {
     }
 
     public void clearSubtasks() {
+        for (Integer epicId: epics.keySet()) {
+            Epic currentEpic = epics.get(epicId);
+            currentEpic.removeSubtasksIds();
+        }
         subtasks.clear();
     }
 
     public void clearEpics() {
         epics.clear();
-    }
-
-    public void clearEpicsAndSubtasks() {
-        epics.clear();
         subtasks.clear();
     }
+
 
     public void removeTaskById(int id) {
         if (tasks.containsKey(id)) {
