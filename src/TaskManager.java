@@ -182,7 +182,7 @@ public class TaskManager {
             flag = TaskStatus.IN_PROGRESS;
         } else if (subtasksStatuses.contains(TaskStatus.NEW) && subtasksStatuses.contains(TaskStatus.DONE)) {
             flag = TaskStatus.IN_PROGRESS;
-        } else if (subtasksStatuses.contains(TaskStatus.DONE) && !subtasksStatuses.contains(TaskStatus.NEW)) {
+        } else if (!subtasksStatuses.contains(TaskStatus.NEW)) {
             flag = TaskStatus.DONE;
         }
         if (flag == TaskStatus.IN_PROGRESS) {
