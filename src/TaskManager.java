@@ -89,7 +89,7 @@ public class TaskManager {
     }
 
     public void clearSubtasks() {
-        for (Integer epicId: epics.keySet()) {
+        for (Integer epicId : epics.keySet()) {
             Epic currentEpic = epics.get(epicId);
             currentEpic.removeSubtasksIds();
         }
@@ -169,29 +169,32 @@ public class TaskManager {
     }
 
     public void changeEpicStatusIfNeeded(int epicId) {
-        List<Subtask> subtasksListToCheck = new ArrayList<>();
         Epic currentEpic = epics.get(epicId);
         Subtask checkedSubtask;
-        TaskStatus flag = TaskStatus.DONE;
-        ArrayList<Integer> subtasksToCheck = currentEpic.getSubtaskIds();
-        for (Integer subtasksId : subtasksToCheck){
+        TaskStatus flag;
+        ArrayList<TaskStatus> subtasksStatuses = new ArrayList<>();
+        ArrayList<Integer> subtasksIdsToCheck = currentEpic.getSubtaskIds();
+        for (Integer subtasksId : subtasksIdsToCheck) {
             checkedSubtask = subtasks.get(subtasksId);
-            subtasksListToCheck.add(checkedSubtask);
-            if (checkedSubtask.getStatus() == TaskStatus.IN_PROGRESS) {
-                flag = TaskStatus.IN_PROGRESS;
-                break;
-            } else if (checkedSubtask.getStatus() != TaskStatus.DONE) {
-                flag = TaskStatus.IN_PROGRESS;
-            }
+            subtasksStatuses.add(checkedSubtask.getStatus());
         }
-        for (Subtask anySubtask : subtasksListToCheck) {
-            if (flag == TaskStatus.IN_PROGRESS) {
-                currentEpic.setStatus(TaskStatus.IN_PROGRESS);
-                epics.replace(epicId, currentEpic);
-            } else {
-                currentEpic.setStatus(TaskStatus.DONE);
-                epics.replace(epicId, currentEpic);
-            }
+        if (subtasksStatuses.contains(TaskStatus.IN_PROGRESS)) {
+            flag = TaskStatus.IN_PROGRESS;
+        } else if (subtasksStatuses.contains(TaskStatus.IN_PROGRESS) && subtasksStatuses.contains(TaskStatus.DONE) && subtasksStatuses.contains(TaskStatus.NEW)) {
+            flag = TaskStatus.IN_PROGRESS;
+        } else if (subtasksStatuses.contains(TaskStatus.NEW) && subtasksStatuses.contains(TaskStatus.DONE)) {
+            flag = TaskStatus.IN_PROGRESS;
+        } else if (subtasksStatuses.contains(TaskStatus.DONE) && !subtasksStatuses.contains(TaskStatus.NEW)) {
+            flag = TaskStatus.DONE;
+        } else {
+            flag = TaskStatus.NEW;
+        }
+        if (flag == TaskStatus.IN_PROGRESS) {
+            currentEpic.setStatus(TaskStatus.IN_PROGRESS);
+            epics.replace(epicId, currentEpic);
+        } else if (flag == TaskStatus.DONE) {
+            currentEpic.setStatus(TaskStatus.DONE);
+            epics.replace(epicId, currentEpic);
         }
     }
 
