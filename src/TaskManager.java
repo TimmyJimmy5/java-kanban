@@ -171,7 +171,7 @@ public class TaskManager {
     public void changeEpicStatusIfNeeded(int epicId) {
         Epic currentEpic = epics.get(epicId);
         Subtask checkedSubtask;
-        TaskStatus flag;
+        TaskStatus flag = TaskStatus.NEW;
         ArrayList<TaskStatus> subtasksStatuses = new ArrayList<>();
         ArrayList<Integer> subtasksIdsToCheck = currentEpic.getSubtaskIds();
         for (Integer subtasksId : subtasksIdsToCheck) {
@@ -180,20 +180,19 @@ public class TaskManager {
         }
         if (subtasksStatuses.contains(TaskStatus.IN_PROGRESS)) {
             flag = TaskStatus.IN_PROGRESS;
-        } else if (subtasksStatuses.contains(TaskStatus.IN_PROGRESS) && subtasksStatuses.contains(TaskStatus.DONE) && subtasksStatuses.contains(TaskStatus.NEW)) {
-            flag = TaskStatus.IN_PROGRESS;
         } else if (subtasksStatuses.contains(TaskStatus.NEW) && subtasksStatuses.contains(TaskStatus.DONE)) {
             flag = TaskStatus.IN_PROGRESS;
         } else if (subtasksStatuses.contains(TaskStatus.DONE) && !subtasksStatuses.contains(TaskStatus.NEW)) {
             flag = TaskStatus.DONE;
-        } else {
-            flag = TaskStatus.NEW;
         }
         if (flag == TaskStatus.IN_PROGRESS) {
             currentEpic.setStatus(TaskStatus.IN_PROGRESS);
             epics.replace(epicId, currentEpic);
         } else if (flag == TaskStatus.DONE) {
             currentEpic.setStatus(TaskStatus.DONE);
+            epics.replace(epicId, currentEpic);
+        } else {
+            currentEpic.setStatus(TaskStatus.NEW);
             epics.replace(epicId, currentEpic);
         }
     }
