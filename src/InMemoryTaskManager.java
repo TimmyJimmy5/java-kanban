@@ -3,31 +3,33 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
     private static int counter = 0;
 
-    private static final HashMap<Integer, Task> tasks = new HashMap<>();
-    private static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private static final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
     HistoryManager historyManager = Managers.getDefaultHistory();
 
     private int globalCounterIncrement() {
-        return InMemoryTaskManager.counter++;
+        return counter++;
     }
 
     @Override
-    public void createTask(Task task) {
+    public int createTask(Task task) {
         int taskId = globalCounterIncrement();
         task.setId(taskId);
         tasks.put(taskId, task);
+        return tasks.get(taskId).getId();
     }
 
     @Override
-    public void createEpic(Epic epic) {
+    public int createEpic(Epic epic) {
         int epicId = globalCounterIncrement();
         epic.setId(epicId);
         epics.put(epicId, epic);
+        return epics.get(epicId).getId();
     }
 
     @Override
-    public void createSubtask(Subtask subtask) {
+    public int createSubtask(Subtask subtask) {
         int subtaskId = globalCounterIncrement();
         subtask.setId(subtaskId);
         Epic currentEpic = epics.get(subtask.getEpicId());
@@ -35,33 +37,39 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.put(subtaskId, subtask);
             currentEpic.setSubtaskIds(subtaskId);
             changeEpicStatusIfNeeded(subtask.getEpicId());
+            return subtasks.get(subtaskId).getId();
+        } else {
+            return -1;
         }
     }
 
     @Override
-    public void changeTask(Task task) {
-        if (tasks.containsKey(task.getId())) {
-            tasks.replace(task.getId(), task);
+    public void changeTask(int id, Task task) {
+        if (tasks.containsKey(id)) {
+            task.setId(id);
+            tasks.replace(id, task);
         } else {
             System.out.println("Такой задачи нет");
         }
     }
 
     @Override
-    public void changeEpic(Epic epic) {
-        if (epics.containsKey(epic.getId())) {
-            epics.replace(epic.getId(), epic);
-            changeEpicStatusIfNeeded(epic.getId());
+    public void changeEpic(int id, Epic epic) {
+        if (epics.containsKey(id)) {
+            epic.setId(id);
+            epics.replace(id, epic);
+            changeEpicStatusIfNeeded(epics.get(id).getId());
         } else {
             System.out.println("Такая составная задача отсутствует.");
         }
     }
 
     @Override
-    public void changeSubtask(Subtask subtask) {
-        if (subtasks.containsKey(subtask.getId())) {
-            subtasks.replace(subtask.getId(), subtask);
-            changeEpicStatusIfNeeded(subtask.getEpicId());
+    public void changeSubtask(int id, Subtask subtask) {
+        if (subtasks.containsKey(id)) {
+            subtask.setId(id);
+            subtasks.replace(id, subtask);
+            changeEpicStatusIfNeeded(subtasks.get(id).getEpicId());
         } else {
             System.out.println("Подзадача не найдена.");
         }
@@ -237,20 +245,16 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void getHistory() {
-        historyManager.getHistory();
-    }
-
-    public static HashMap<Integer, Task> getTasks() {
-        return tasks;
-    }
-
-    public static HashMap<Integer, Subtask> getSubtasks() {
-        return subtasks;
-    }
-
-    public static HashMap<Integer, Epic> getEpics() {
-        return epics;
+    public List<Task> getHistory() {
+        if (historyManager.getHistoryOfTasks().isEmpty()) {
+            System.out.println("История просмотров отсутствует.");
+            return null;
+        } else {
+            for (Task task : historyManager.getHistoryOfTasks()) {
+                System.out.println(task);
+            }
+            return historyManager.getHistoryOfTasks();
+        }
     }
 }
 

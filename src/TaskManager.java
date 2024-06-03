@@ -1,19 +1,18 @@
-import java.util.HashMap;
 import java.util.List;
 
 public interface TaskManager {
 
-    void createTask(Task task);
+    int createTask(Task task);
 
-    void createEpic(Epic epic);
+    int createEpic(Epic epic);
 
-    void createSubtask(Subtask subtask);
+    int createSubtask(Subtask subtask);
 
-    void changeTask(Task task);
+    void changeTask(int id, Task task);
 
-    void changeEpic(Epic epic);
+    void changeEpic(int id, Epic epic);
 
-    void changeSubtask(Subtask subtask);
+    void changeSubtask(int id, Subtask subtask);
 
     List<Epic> getAllEpics();
 
@@ -43,5 +42,5 @@ public interface TaskManager {
 
     void changeTaskOrSubtaskStatus(int id, TaskStatus status);
 
-    void getHistory();
+    List<Task> getHistory();
 }
