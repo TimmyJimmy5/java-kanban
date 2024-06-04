@@ -1,7 +1,10 @@
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.Test;
+import service.InMemoryTaskManager;
+import service.TaskManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,8 +57,8 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Lol", "Kek", TaskStatus.NEW);
         final int epicId = taskManager.createEpic(epic);
         Subtask subtask = new Subtask("Lol", "Kek", TaskStatus.NEW, epicId);
-        final int subtaskId = taskManager.createSubtask(subtask);
-        assertNotEquals(-1, subtaskId, "Подзадача не создалась, возвращено отрицательное значение.");
+        final Integer subtaskId = taskManager.createSubtask(subtask);
+        assertNotNull(subtaskId, "Подзадача не создалась, возвращено отрицательное значение.");
         subtask = taskManager.searchSubtaskById(subtaskId);
         Subtask subtask1 = taskManager.searchSubtaskById(subtaskId);
         assertEquals(subtask, subtask1, "Подзадачи не совпадают.");
@@ -65,10 +68,14 @@ class InMemoryTaskManagerTest {
     public void changeTaskReallyChangesTask(){
         Task task = new Task("Lol", "Kek", TaskStatus.NEW);
         final int taskId = taskManager.createTask(task);
+        System.out.println(taskManager.getAllTasks());
         Task updatedTask = new Task("Покормить собаку.", "Кек", TaskStatus.NEW);
         taskManager.changeTask(taskId, updatedTask);
         Task taskViaSearch = taskManager.searchTaskById(taskId);
-        assertNotEquals(task, taskViaSearch, "Задача не изменилась.");
+        System.out.println(taskManager.getAllTasks());
+        assertEquals(task.getId(), taskViaSearch.getId(), "Изменился ID.");
+        assertNotEquals(task.getName(), taskViaSearch.getName(), "Не изменилось наименование задачи.");
+        assertNotEquals(task.getDescription(), taskViaSearch.getDescription(), "Не изменилось описание задачи.");
     }
 
     @Test
@@ -87,7 +94,7 @@ class InMemoryTaskManagerTest {
         final int subtaskId = taskManager.createSubtask(subtask);
         assertNotEquals(-1, subtaskId, "Подзадача не создалась, возвращено отрицательное значение.");
         taskManager.removeEpicById(epicId);
-        assertNull(taskManager.searchEpicById(epicId), "Epic не удалился");
+        assertNull(taskManager.searchEpicById(epicId), "model.Epic не удалился");
         assertNull(taskManager.searchSubtaskById(subtaskId), "Подзадача эпика не удалилась");
     }
 

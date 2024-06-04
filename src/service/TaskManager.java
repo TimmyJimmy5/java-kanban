@@ -1,3 +1,10 @@
+package service;
+
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
+
 import java.util.List;
 
 public interface TaskManager {
@@ -6,7 +13,7 @@ public interface TaskManager {
 
     int createEpic(Epic epic);
 
-    int createSubtask(Subtask subtask);
+    Integer createSubtask(Subtask subtask);
 
     void changeTask(int id, Task task);
 

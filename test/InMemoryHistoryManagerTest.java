@@ -1,5 +1,9 @@
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import service.HistoryManager;
+import service.InMemoryHistoryManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +18,7 @@ class InMemoryHistoryManagerTest {
     @Test
     public void isHistoryWritten() {
         Task task = new Task("Abc", "Def", TaskStatus.NEW);
-        historyManager.writeHistory(task);
+        historyManager.addTask(task);
         assertNotNull(historyManager.getHistoryOfTasks(), "История пустая. Возвращено null");
         assertEquals(1, historyManager.getHistoryOfTasks().size(), "История пустая. Размер списка 0");
     }

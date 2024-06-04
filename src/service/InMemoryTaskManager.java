@@ -1,3 +1,10 @@
+package service;
+
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
+
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -8,13 +15,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     HistoryManager historyManager = Managers.getDefaultHistory();
 
-    private int globalCounterIncrement() {
+    private int CounterIncrement() {
         return counter++;
     }
 
     @Override
     public int createTask(Task task) {
-        int taskId = globalCounterIncrement();
+        int taskId = CounterIncrement();
         task.setId(taskId);
         tasks.put(taskId, task);
         return tasks.get(taskId).getId();
@@ -22,15 +29,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int createEpic(Epic epic) {
-        int epicId = globalCounterIncrement();
+        int epicId = CounterIncrement();
         epic.setId(epicId);
         epics.put(epicId, epic);
         return epics.get(epicId).getId();
     }
 
     @Override
-    public int createSubtask(Subtask subtask) {
-        int subtaskId = globalCounterIncrement();
+    public Integer createSubtask(Subtask subtask) {
+        int subtaskId = CounterIncrement();
         subtask.setId(subtaskId);
         Epic currentEpic = epics.get(subtask.getEpicId());
         if (!epics.isEmpty() && currentEpic != null) {
@@ -39,7 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
             changeEpicStatusIfNeeded(subtask.getEpicId());
             return subtasks.get(subtaskId).getId();
         } else {
-            return -1;
+            return null;
         }
     }
 
@@ -155,7 +162,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(id)) {
             if (subtask != null) {
                 Epic currentEpic = epics.get(subtask.getEpicId());
-                ArrayList<Integer> subtasksId = currentEpic.getSubtaskIds();
+                List<Integer> subtasksId = currentEpic.getSubtaskIds();
                 subtasksId.remove((Integer) subtask.getId());
                 subtasks.remove(id);
                 changeEpicStatusIfNeeded(currentEpic.getId());
@@ -168,7 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task searchTaskById(int id) {
         if (tasks.containsKey(id)) {
-            historyManager.writeHistory(tasks.get(id));
+            historyManager.addTask(tasks.get(id));
             return tasks.get(id);
         } else {
             System.out.println("Задача не найдена");
@@ -179,7 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask searchSubtaskById(int id) {
         if (subtasks.containsKey(id)) {
-            historyManager.writeHistory(subtasks.get(id));
+            historyManager.addTask(subtasks.get(id));
             return subtasks.get(id);
         } else {
             System.out.println("Задача не найдена");
@@ -190,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic searchEpicById(int id) {
         if (epics.containsKey(id)) {
-            historyManager.writeHistory(epics.get(id));
+            historyManager.addTask(epics.get(id));
             return epics.get(id);
         } else {
             System.out.println("Задача не найдена");
@@ -203,8 +210,8 @@ public class InMemoryTaskManager implements TaskManager {
         Epic currentEpic = epics.get(epicId);
         Subtask checkedSubtask;
         TaskStatus flag = TaskStatus.NEW;
-        ArrayList<TaskStatus> subtasksStatuses = new ArrayList<>();
-        ArrayList<Integer> subtasksIdsToCheck = currentEpic.getSubtaskIds();
+        List<TaskStatus> subtasksStatuses = new ArrayList<>();
+        List<Integer> subtasksIdsToCheck = currentEpic.getSubtaskIds();
         for (Integer subtasksId : subtasksIdsToCheck) {
             checkedSubtask = subtasks.get(subtasksId);
             subtasksStatuses.add(checkedSubtask.getStatus());

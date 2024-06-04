@@ -1,10 +1,12 @@
+package model;
+
 import java.util.*;
 
 public class Task {
+    private int id;
     private final String name;
     private final String description;
     private TaskStatus status;
-    private int id;
 
     public Task(String name, String description, TaskStatus status) {
         this.description = description;
@@ -41,8 +43,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(description, task.description) && Objects.equals(name, task.name)
-                && status == task.status;
+        return id == task.id;
     }
 
     @Override
@@ -52,7 +53,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "model.Task{" +
                 "name='" + name + '\'' +
                 ", ID=" + id +
                 ", description='" + description + '\'' +
