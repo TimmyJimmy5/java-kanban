@@ -5,7 +5,9 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
     private static int counter = 0;
