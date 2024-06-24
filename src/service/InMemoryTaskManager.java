@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
-    private static int counter = 0;
+    Managers managers = new Managers();
+    private int counter = 0;
 
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    HistoryManager historyManager = managers.getDefaultHistory();
 
     private int CounterIncrement() {
         return counter++;
@@ -150,6 +151,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (currentEpic != null) {
                 for (Integer subtask : currentEpic.getSubtaskIds()) {
                     subtasks.remove(subtask);
+                    historyManager.removeTask(subtask);
                 }
             }
             epics.remove(id);

@@ -4,7 +4,9 @@ import model.Task;
 import model.Node;
 import model.TasksLinkedList;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private Map<Integer, Node<Task>> linkNodesToTaskIds = new HashMap<>();
