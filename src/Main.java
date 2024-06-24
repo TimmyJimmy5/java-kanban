@@ -47,8 +47,8 @@ public class Main {
         System.out.println(inMemoryTaskManager.searchEpicById(3));
         System.out.println(inMemoryTaskManager.searchTaskById(1));
         System.out.println(inMemoryTaskManager.searchEpicById(3));
-        System.out.println(inMemoryTaskManager.searchTaskById(2));
-        System.out.println(inMemoryTaskManager.searchEpicById(3));
+        //System.out.println(inMemoryTaskManager.searchTaskById(2));
+        System.out.println(inMemoryTaskManager.searchSubtaskById(5));
         System.out.println(inMemoryTaskManager.searchTaskById(2));
         System.out.println(inMemoryTaskManager.searchEpicById(3));
         System.out.println(inMemoryTaskManager.searchTaskById(0));

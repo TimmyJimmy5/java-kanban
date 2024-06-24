@@ -137,6 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
             System.out.println("Задача удалена.");
+            historyManager.removeTask(id);
         } else {
             System.out.println("Задача не найдена");
         }
@@ -153,6 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epics.remove(id);
             System.out.println("Составная задача и её подзадачи удалены.");
+            historyManager.removeTask(id);
         } else {
             System.out.println("Составная задача не найдена");
         }
@@ -168,6 +170,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasksId.remove((Integer) subtask.getId());
                 subtasks.remove(id);
                 changeEpicStatusIfNeeded(currentEpic.getId());
+                historyManager.removeTask(id);
             }
         } else {
             System.out.println("Подзадача не найдена");
