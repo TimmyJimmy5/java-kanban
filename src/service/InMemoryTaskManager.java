@@ -18,13 +18,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     HistoryManager historyManager = managers.getDefaultHistory();
 
-    private int сounterIncrement() {
+    private int counterIncrement() {
         return counter++;
     }
 
     @Override
     public int createTask(Task task) {
-        int taskId = сounterIncrement();
+        int taskId = counterIncrement();
         task.setId(taskId);
         tasks.put(taskId, task);
         return tasks.get(taskId).getId();
@@ -32,7 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int createEpic(Epic epic) {
-        int epicId = сounterIncrement();
+        int epicId = counterIncrement();
         epic.setId(epicId);
         epics.put(epicId, epic);
         return epics.get(epicId).getId();
@@ -40,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Integer createSubtask(Subtask subtask) {
-        int subtaskId = сounterIncrement();
+        int subtaskId = counterIncrement();
         subtask.setId(subtaskId);
         Epic currentEpic = epics.get(subtask.getEpicId());
         if (!epics.isEmpty() && currentEpic != null) {
