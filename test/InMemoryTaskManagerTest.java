@@ -65,7 +65,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void changeTaskReallyChangesTask(){
+    public void changeTaskReallyChangesTask() {
         Task task = new Task("Lol", "Kek", TaskStatus.NEW);
         final int taskId = taskManager.createTask(task);
         System.out.println(taskManager.getAllTasks());
