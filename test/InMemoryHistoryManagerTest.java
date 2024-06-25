@@ -4,7 +4,10 @@ import model.Task;
 import model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.*;
+import service.HistoryManager;
+import service.InMemoryHistoryManager;
+import service.Managers;
+import service.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
