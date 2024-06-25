@@ -65,7 +65,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void changeTaskReallyChangesTask(){
+    public void changeTaskReallyChangesTask() {
         Task task = new Task("Lol", "Kek", TaskStatus.NEW);
         final int taskId = taskManager.createTask(task);
         System.out.println(taskManager.getAllTasks());
@@ -122,6 +122,20 @@ class InMemoryTaskManagerTest {
         taskManager.searchTaskById(taskId);
         Task afterChange = taskManager.getHistory().getFirst();
         assertEquals(afterChange, beforeChange, "В истории сохранена не предыдущая версия задачи");
+    }
+
+    @Test
+    public void isUnableToSetSubtaskIdAsEpicId() {
+        Epic inputTask = new Epic("Lol", "Kek", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(inputTask);
+        Subtask subtask = new Subtask("SubtaskLol", "Kek", TaskStatus.NEW, epicId);
+        int subtaskId = taskManager.createSubtask(subtask);
+        Epic epicTaskFromManager = taskManager.searchEpicById(epicId);
+        epicTaskFromManager.setSubtaskIds(epicTaskFromManager.getId());
+        assertFalse(epicTaskFromManager.getSubtaskIds().contains(epicTaskFromManager.getId()), "Эпик назначил себя в виде подзадачи.");
+        Subtask subtaskFromManager = taskManager.searchSubtaskById(subtaskId);
+        subtaskFromManager.setEpicId(subtaskId);
+        assertNotEquals(subtaskFromManager.getEpicId(), subtaskId, "Подзадача не может быть подзадачей самой себя.");
     }
 
 

@@ -8,7 +8,8 @@ import service.TaskManager;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager inMemoryTaskManager = Managers.getDefault();
+        Managers managers = new Managers();
+        TaskManager inMemoryTaskManager = managers.getDefault();
 
         inMemoryTaskManager.createTask(new Task("Покормить кота.", "Корм находится на верхней полке", TaskStatus.NEW));
         inMemoryTaskManager.createTask(new Task("Покормить собаку.", "Корм находится на средней полке", TaskStatus.NEW));
@@ -42,13 +43,12 @@ public class Main {
         }
         System.out.println(" ");
 
-        System.out.println("Тут должны быть 12 задач");
+        System.out.println("Тут должны быть вызовы 12 задач с записью в истории");
         System.out.println(inMemoryTaskManager.searchTaskById(0));
         System.out.println(inMemoryTaskManager.searchEpicById(3));
         System.out.println(inMemoryTaskManager.searchTaskById(1));
         System.out.println(inMemoryTaskManager.searchEpicById(3));
-        System.out.println(inMemoryTaskManager.searchTaskById(2));
-        System.out.println(inMemoryTaskManager.searchEpicById(3));
+        System.out.println(inMemoryTaskManager.searchSubtaskById(5));
         System.out.println(inMemoryTaskManager.searchTaskById(2));
         System.out.println(inMemoryTaskManager.searchEpicById(3));
         System.out.println(inMemoryTaskManager.searchTaskById(0));
@@ -56,7 +56,7 @@ public class Main {
         System.out.println(inMemoryTaskManager.searchTaskById(1));
         System.out.println(inMemoryTaskManager.searchEpicById(3));
         System.out.println(" ");
-        System.out.println("Тут должна быть история (10 единиц):");
+        System.out.println("Тут должна быть история (5 единиц):");
         inMemoryTaskManager.getHistory();
         System.out.println(" ");
     }

@@ -16,7 +16,11 @@ public class Epic extends Task {
     }
 
     public void setSubtaskIds(int id) {
-        subtaskIds.add(id);
+        if (subtaskIds.contains(id) || id == getId()) {
+            System.out.println("Нельзя назначить самого себя в виде подзадачи.");
+        } else {
+            subtaskIds.add(id);
+        }
     }
 
     public void removeSubtasksIds() {
