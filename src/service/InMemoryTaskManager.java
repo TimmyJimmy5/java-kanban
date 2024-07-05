@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
-    private static int counter = 0;
-
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    Managers managers = new Managers();
+    HistoryManager historyManager = managers.getDefaultHistory();
+    private int counter = 0;
 
-    private int CounterIncrement() {
+    private int counterIncrement() {
         return counter++;
     }
 
     @Override
     public int createTask(Task task) {
-        int taskId = CounterIncrement();
+        int taskId = counterIncrement();
         task.setId(taskId);
         tasks.put(taskId, task);
         return tasks.get(taskId).getId();
@@ -31,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int createEpic(Epic epic) {
-        int epicId = CounterIncrement();
+        int epicId = counterIncrement();
         epic.setId(epicId);
         epics.put(epicId, epic);
         return epics.get(epicId).getId();
@@ -39,7 +39,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Integer createSubtask(Subtask subtask) {
-        int subtaskId = CounterIncrement();
+        int subtaskId = counterIncrement();
         subtask.setId(subtaskId);
         Epic currentEpic = epics.get(subtask.getEpicId());
         if (!epics.isEmpty() && currentEpic != null) {
@@ -137,6 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
             System.out.println("Задача удалена.");
+            historyManager.removeTask(id);
         } else {
             System.out.println("Задача не найдена");
         }
@@ -149,10 +150,12 @@ public class InMemoryTaskManager implements TaskManager {
             if (currentEpic != null) {
                 for (Integer subtask : currentEpic.getSubtaskIds()) {
                     subtasks.remove(subtask);
+                    historyManager.removeTask(subtask);
                 }
             }
             epics.remove(id);
             System.out.println("Составная задача и её подзадачи удалены.");
+            historyManager.removeTask(id);
         } else {
             System.out.println("Составная задача не найдена");
         }
@@ -168,6 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasksId.remove((Integer) subtask.getId());
                 subtasks.remove(id);
                 changeEpicStatusIfNeeded(currentEpic.getId());
+                historyManager.removeTask(id);
             }
         } else {
             System.out.println("Подзадача не найдена");
