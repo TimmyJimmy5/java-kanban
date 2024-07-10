@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private String path;
-    private File tasksFile;
+    private final File tasksFile;
 
     @Override
     public int createTask(Task task) {
@@ -52,6 +51,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public FileBackedTaskManager(Path pathValue, Path fileName) throws ManagerSaveException {
+        String path;
         if ((!pathValue.toString().isBlank()) || !pathValue.toString().isEmpty()) {
             path = String.valueOf(pathValue);
         } else {
@@ -127,27 +127,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Не удалось перенести задачу из файла, т.к. строка пустая.");
         }
         try {
-            if (TaskType.valueOf(task[1]) == TaskType.TASK) {
-                taskStatus = TaskStatus.valueOf(task[3]);
-                returnedTask = new Task(task[2], task[4], taskStatus);
-                returnedTask.setId(Integer.parseInt(task[0]));
-                returnedTask.setTaskType(TaskType.valueOf(task[1]));
-                setIdCounter(returnedTask);
-                return returnedTask;
-            } else if (TaskType.valueOf(task[1]) == TaskType.EPIC) {
-                taskStatus = TaskStatus.valueOf(task[3]);
-                returnedTask = new Epic(task[2], task[4], taskStatus);
-                returnedTask.setId(Integer.parseInt(task[0]));
-                returnedTask.setTaskType(TaskType.valueOf(task[1]));
-                setIdCounter(returnedTask);
-                return returnedTask;
-            } else if (TaskType.valueOf(task[1]) == TaskType.SUBTASK) {
-                taskStatus = TaskStatus.valueOf(task[3]);
-                returnedTask = new Subtask(task[2], task[4], taskStatus, Integer.parseInt(task[5]));
-                returnedTask.setId(Integer.parseInt(task[0]));
-                returnedTask.setTaskType(TaskType.valueOf(task[1]));
-                setIdCounter(returnedTask);
-                return returnedTask;
+            switch (TaskType.valueOf(task[1])) {
+                case TASK:
+                    taskStatus = TaskStatus.valueOf(task[3]);
+                    returnedTask = new Task(task[2], task[4], taskStatus);
+                    returnedTask.setId(Integer.parseInt(task[0]));
+                    returnedTask.setTaskType(TaskType.valueOf(task[1]));
+                    setIdCounter(returnedTask);
+                    return returnedTask;
+                case EPIC:
+                    taskStatus = TaskStatus.valueOf(task[3]);
+                    returnedTask = new Epic(task[2], task[4], taskStatus);
+                    returnedTask.setId(Integer.parseInt(task[0]));
+                    returnedTask.setTaskType(TaskType.valueOf(task[1]));
+                    setIdCounter(returnedTask);
+                    return returnedTask;
+                case SUBTASK:
+                    taskStatus = TaskStatus.valueOf(task[3]);
+                    returnedTask = new Subtask(task[2], task[4], taskStatus, Integer.parseInt(task[5]));
+                    returnedTask.setId(Integer.parseInt(task[0]));
+                    returnedTask.setTaskType(TaskType.valueOf(task[1]));
+                    setIdCounter(returnedTask);
+                    return returnedTask;
             }
         } catch (NumberFormatException exception) {
             exception.printStackTrace();
@@ -200,10 +201,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fileBackedTaskManager.autoloadPutTask(taskToReadFromFile);
             fileBackedTaskManager.setIdCounter(taskToReadFromFile);
         }
-        String[] history = tasks.get(tasks.size() - 1).split(",");
-        for (int j = 0; j < history.length; j++) {
-            if (!history[j].isBlank()) {
-                historyIds.add(Integer.parseInt(history[j]));
+        String[] history = tasks.getLast().split(",");
+        for (String string : history) {
+            if (!string.isBlank()) {
+                historyIds.add(Integer.parseInt(string));
             }
         }
         for (Integer id : historyIds) {
