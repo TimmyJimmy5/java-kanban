@@ -7,11 +7,17 @@ public class Task {
     private final String description;
     private int id;
     private TaskStatus status;
+    TaskType taskType;
+
+    public TaskType getTaskType() {
+        return taskType;
+    }
 
     public Task(String name, String description, TaskStatus status) {
         this.description = description;
         this.name = name;
         this.status = status;
+        this.taskType = TaskType.TASK;
     }
 
     public String getDescription() {
@@ -58,6 +64,10 @@ public class Task {
                 ", ID=" + id +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                '}';
+                '}' + "\n";
+    }
+
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
     }
 }
