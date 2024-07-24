@@ -1,12 +1,17 @@
 package service;
 
-import model.*;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
