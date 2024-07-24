@@ -39,7 +39,7 @@ public class InMemoryTaskManager implements TaskManager {
         try {
             addToPrioritizedTasks(task);
         } catch (ManagerSaveException ex) {
-            System.out.println("Задача не добавлена в список сортированный список задач по времени");
+            System.out.println("Задача не добавлена в сортированный список задач по времени");
         }
         return tasks.get(taskId).getId();
     }
@@ -269,15 +269,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public Set<Task> getPrioritizedTasks() {
-        return prioritizedTasks;
+        if (prioritizedTasks.isEmpty()) {
+            return null;
+        } else {
+            return prioritizedTasks;
+        }
     }
 
     private boolean intersectionValidator(Task task) {
         return prioritizedTasks.stream().filter(task1 -> task1.getId() != task.getId())
-                .anyMatch(t -> ((t.getStartTime().isBefore(task.getEndTime())
-                        & t.getStartTime().isAfter(task.getStartTime()))) ||
-                        (t.getEndTime().isAfter(task.getStartTime()) & t.getEndTime().isBefore(task.getEndTime())) ||
+                .anyMatch(t -> (
+                        (t.getStartTime().isBefore(task.getEndTime()) & t.getEndTime().isAfter(task.getEndTime()))) ||
+                        (t.getEndTime().isAfter(task.getStartTime()) & t.getStartTime().isBefore(task.getStartTime())) ||
                         (t.getStartTime().isBefore(task.getStartTime()) & t.getEndTime().isAfter(task.getEndTime())) ||
+                        (t.getStartTime().isAfter(task.getStartTime()) & t.getEndTime().isBefore(task.getEndTime())) ||
                         (t.getStartTime().isEqual(task.getStartTime()) || (t.getEndTime().isEqual(task.getEndTime()))));
     }
 

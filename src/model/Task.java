@@ -89,7 +89,9 @@ public class Task implements Comparable<Task> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
+                && status == task.status && taskType == task.taskType
+                && Objects.equals(startTime, task.startTime) && Objects.equals(duration, task.duration);
     }
 
     @Override
@@ -115,12 +117,12 @@ public class Task implements Comparable<Task> {
 
     public int compareTo(Task o) {
         int value = -1;
-        if (o.getStartTime().isAfter(this.getStartTime())) {
-            value = -1;
-        } else if (o.getStartTime().isBefore(this.getStartTime())) {
+        if (o.getId() == (this.getId())) {
+            value = 0;
+        } else if ((o.getStartTime().isBefore(this.getStartTime())) || o.getStartTime().isEqual(this.getStartTime())) {
             value = 1;
         } else {
-            value = 0;
+            value = -1;
         }
         return value;
     }

@@ -17,8 +17,8 @@ public class Main {
         //Блок мейна, посвященный проверке сохранения в файл
         FileBackedTaskManager manager = new FileBackedTaskManager(Paths.get(""), file.toPath());
         //Создаю 3 таски, 2 эпика и 5 сабтасок для них
-        Task testTask1 = new Task("Покормить кота.", "Корм находится на верхней полке", TaskStatus.NEW, 30, "12:00 24.07.2024");
-        Task testTask2 = new Task("Покормить собаку.", "Корм находится на средней полке", TaskStatus.NEW,  30, "12:00 25.07.2024");
+        Task testTask1 = new Task("Покормить кота.", "Корм находится на верхней полке", TaskStatus.NEW, 30, "12:00 22.07.2024");
+        Task testTask2 = new Task("Покормить собаку.", "Корм находится на средней полке", TaskStatus.NEW,  30, "12:00 24.07.2024");
         Task testTask3 = new Task("Покормить домашнего медведя.", "Корм находится на нижней полке", TaskStatus.NEW,  30, "12:00 26.07.2024");
         manager.createTask(testTask1);
         manager.createTask(testTask2);
@@ -51,6 +51,7 @@ public class Main {
         System.out.println("=== Проверка удаления таски ИД 1 и 9  ===");
         managerLoad.removeTaskById(1);
         managerLoad.removeSubtaskById(9);
+        System.out.println("=== Пересчитано время у эпика ИД 4 с 13:30 - 14:30 на 13:30 - 14:00 ===");
         System.out.println(managerLoad.getAllTasks() + "\n" + managerLoad.getAllEpics());
         System.out.println("=== Показываю сортировку после удаления ===");
         System.out.println(managerLoad.getPrioritizedTasks());

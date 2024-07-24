@@ -4,7 +4,10 @@ import model.Task;
 import model.TaskStatus;
 import org.junit.jupiter.api.Test;
 import service.InMemoryTaskManager;
+import service.ManagerSaveException;
 import service.TaskManager;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -123,7 +126,7 @@ class InMemoryTaskManagerTest {
         taskManager.changeTask(taskId, changedTask);
         taskManager.searchTaskById(taskId);
         Task afterChange = taskManager.getHistory().getFirst();
-        assertEquals(afterChange, beforeChange, "В истории сохранена не предыдущая версия задачи");
+        assertEquals(afterChange, changedTask, "В истории сохранена не предыдущая версия задачи");
     }
 
     @Test
@@ -140,6 +143,123 @@ class InMemoryTaskManagerTest {
         assertNotEquals(subtaskFromManager.getEpicId(), subtaskId, "Подзадача не может быть подзадачей самой себя.");
     }
 
+    @Test
+    public void changeEpic() {
+        Epic epic = new Epic("Lol2", "Kek2", TaskStatus.NEW);
+        Epic changedEpic = new Epic("Lol3", "Kek3", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(epic);
+        taskManager.changeEpic(epicId, changedEpic);
+        System.out.println(taskManager.searchEpicById(epicId));
+        assertEquals(taskManager.searchEpicById(epicId), changedEpic, "Эпик не поменялся.");
+    }
 
+    @Test
+    public void clearTasks() {
+        Task task0 = new Task("lol", "kek", TaskStatus.NEW, 10, "12:00 24.07.2024");
+        Task task1 = new Task("lol1", "1111", TaskStatus.NEW, 10, "12:20 24.07.2024");
+        taskManager.createTask(task0);
+        taskManager.createTask(task1);
+        assertEquals(2, taskManager.getAllTasks().size(), "Не две задачи создались.");
+        taskManager.clearTasks();
+        assertNull(taskManager.getAllTasks(), "Таски не нулевые.");
+    }
 
+    @Test
+    public void clearEpicsAndSubtasks() {
+        Epic epic = new Epic("Lol2", "Kek2", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("SubtaskLol", "Kek", TaskStatus.NEW, epicId, 10, "12:00 24.07.2024");
+        taskManager.createSubtask(subtask);
+        assertEquals(1, taskManager.getAllEpics().size(), "Эпик не создался.");
+        assertEquals(1, taskManager.getAllSubtasks().size(), "Подзадача не создалась.");
+        taskManager.clearEpics();
+        taskManager.clearSubtasks();
+        assertNull(taskManager.getAllEpics(), "Эпики все еще есть в списке.");
+        assertNull(taskManager.getAllSubtasks(), "Сабтаски все еще есть в списке.");
+    }
+
+    @Test
+    public void addToPrioritizedTasks() {
+        Task task0 = new Task("lol", "kek", TaskStatus.NEW, 10, "12:00 24.07.2024");
+        Task taskChanged = new Task("lol111", "kek", TaskStatus.NEW, 10, "12:00 24.07.2024");
+        int taskId = taskManager.createTask(task0);
+        Epic epic = new Epic("Lol2", "Kek2", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("SubtaskLol", "Kek", TaskStatus.NEW, epicId, 10, "12:30 24.07.2024");
+        int subtaskId = taskManager.createSubtask(subtask);
+        assertEquals(2, taskManager.getPrioritizedTasks().size(), "prioritySet is not of size 2");
+        List<Task> priorityList = taskManager.getPrioritizedTasks().stream().toList();
+        assertEquals(task0, priorityList.getFirst(), "Task not equals to task in prioritizedSet");
+        assertEquals(subtask, priorityList.get(1), "Subtask not equals to Subtask in prioritizedSet");
+        taskManager.changeTask(taskId, taskChanged);
+        priorityList = taskManager.getPrioritizedTasks().stream().toList();
+        assertEquals(taskChanged, priorityList.getFirst(), "Не обновилась задача в отсортированном множестве.");
+        taskManager.removeTaskById(taskId);
+        assertEquals(1, taskManager.getPrioritizedTasks().size(), "prioritySet is not of size 1 after deletion");
+        taskManager.removeSubtaskById(subtaskId);
+        assertNull(taskManager.getPrioritizedTasks(), "prioritySet is not of size 0 after deletion");
+    }
+
+    @Test
+    public void removeSubtaskById() {
+        Epic epic = new Epic("Lol2", "Kek2", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("SubtaskLol", "Kek", TaskStatus.NEW, epicId, 10, "12:30 24.07.2024");
+        int subtaskId = taskManager.createSubtask(subtask);
+        Epic epicInManager = taskManager.searchEpicById(epicId);
+        assertEquals(epicInManager.getSubtaskIds().getFirst(), subtaskId, "Subtask is not on list inside Epic");
+        taskManager.removeSubtaskById(subtaskId);
+        epicInManager = taskManager.searchEpicById(epicId);
+        assertTrue(epicInManager.getSubtaskIds().isEmpty(), "Subtask Id was not removed inside epic");
+    }
+
+    @Test
+    public void changeTaskOrSubtaskStatus() {
+        Task task0 = new Task("lol", "kek", TaskStatus.NEW, 10, "12:00 24.07.2024");
+        int taskId = taskManager.createTask(task0);
+        taskManager.changeTaskOrSubtaskStatus(taskId, TaskStatus.IN_PROGRESS);
+        assertNotEquals(TaskStatus.NEW, taskManager.searchTaskById(taskId).getStatus(), "Status was not changed to IN PROGRESS");
+        Epic epic = new Epic("Lol2", "Kek2", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("SubtaskLol", "Kek", TaskStatus.NEW, epicId, 10, "12:30 24.07.2024");
+        int subtaskId = taskManager.createSubtask(subtask);
+        taskManager.changeTaskOrSubtaskStatus(subtaskId, TaskStatus.IN_PROGRESS);
+        assertNotEquals(TaskStatus.NEW, taskManager.searchSubtaskById(subtaskId).getStatus(), "Subtask status was not changed to IN PROGRESS");
+    }
+
+    @Test
+    public void epicStatusCalculation() {
+        Epic epic = new Epic("Lol2", "Kek2", TaskStatus.NEW);
+        int epicId = taskManager.createEpic(epic);
+        Subtask subtask1 = new Subtask("SubtaskLol1", "Kek1", TaskStatus.NEW, epicId, 30, "12:30 24.07.2024");
+        Subtask subtask2 = new Subtask("SubtaskLol2", "Kek2", TaskStatus.NEW, epicId, 30, "13:00 24.07.2024");
+        Subtask subtask3 = new Subtask("SubtaskLol3", "Kek3", TaskStatus.NEW, epicId, 30, "13:30 24.07.2024");
+        int subtask1Id = taskManager.createSubtask(subtask1);
+        int subtask2Id = taskManager.createSubtask(subtask2);
+        int subtask3Id = taskManager.createSubtask(subtask3);
+        assertEquals(taskManager.searchEpicById(epicId).getStatus(), TaskStatus.NEW, "Epic Status not NEW.");
+        taskManager.changeTaskOrSubtaskStatus(subtask1Id, TaskStatus.DONE);
+        taskManager.changeTaskOrSubtaskStatus(subtask2Id, TaskStatus.DONE);
+        taskManager.changeTaskOrSubtaskStatus(subtask3Id, TaskStatus.DONE);
+        assertEquals(taskManager.searchEpicById(epicId).getStatus(), TaskStatus.DONE, "Epic Status not DONE.");
+        taskManager.changeTaskOrSubtaskStatus(subtask1Id, TaskStatus.NEW);
+        assertEquals(taskManager.searchEpicById(epicId).getStatus(), TaskStatus.IN_PROGRESS, "Epic Status not IN PROGRESS.");
+        taskManager.changeTaskOrSubtaskStatus(subtask1Id, TaskStatus.IN_PROGRESS);
+        taskManager.changeTaskOrSubtaskStatus(subtask2Id, TaskStatus.IN_PROGRESS);
+        taskManager.changeTaskOrSubtaskStatus(subtask3Id, TaskStatus.IN_PROGRESS);
+        assertEquals(taskManager.searchEpicById(epicId).getStatus(), TaskStatus.IN_PROGRESS, "Epic Status not IN PROGRESS.");
+    }
+
+    @Test
+    public void intersectionsValidation() {
+        assertThrows(ManagerSaveException.class, () -> {
+            Task task0 = new Task("lol", "kek", TaskStatus.NEW, 10, "12:00 24.07.2024");
+            Task task1 = new Task("lol1", "kek1", TaskStatus.NEW, 10, "12:05 24.07.2024");
+            taskManager.createTask(task0);
+            task1.setId(1);
+            //taskManager.createTask(task1);
+            taskManager.addToPrioritizedTasks(task1);
+            System.out.println(taskManager.getPrioritizedTasks());
+        }, "Попытка добавить в существующий временной интервал должна давать ошибку.");
+    }
 }

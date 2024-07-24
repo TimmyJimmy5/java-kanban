@@ -201,7 +201,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fileBackedTaskManager.autoloadPutTask(taskToReadFromFile);
             fileBackedTaskManager.setIdCounter(taskToReadFromFile);
             if (taskToReadFromFile.getTaskType() != TaskType.EPIC) {
-                fileBackedTaskManager.addToPrioritizedTasks(taskToReadFromFile);
+                try {
+                    fileBackedTaskManager.addToPrioritizedTasks(taskToReadFromFile);
+                } catch (ManagerSaveException ex) {
+                    System.out.println("Задача не добавлена в сортированный список задач по времени");
+                }
             }
         }
         String[] history = tasks.getLast().split(",");
@@ -220,7 +224,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         }
         bufferedReader.close();
-        //fileBackedTaskManager.restorePrioritizedTasks();
         return fileBackedTaskManager;
     }
 
