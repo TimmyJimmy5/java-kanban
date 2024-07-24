@@ -1,6 +1,9 @@
 package model;
+import service.InMemoryTaskManager;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -12,6 +15,7 @@ public class Epic extends Task {
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
         this.taskType = TaskType.EPIC;
+        this.endTime = startTime.plusMinutes(duration.toMinutes());
     }
 
     public List<Integer> getSubtaskIds() {

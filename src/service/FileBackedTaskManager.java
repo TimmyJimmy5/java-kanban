@@ -200,6 +200,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             Task taskToReadFromFile = taskFromString(tasks.get(i));
             fileBackedTaskManager.autoloadPutTask(taskToReadFromFile);
             fileBackedTaskManager.setIdCounter(taskToReadFromFile);
+            if (taskToReadFromFile.getTaskType() != TaskType.EPIC) {
+                fileBackedTaskManager.addToPrioritizedTasks(taskToReadFromFile);
+            }
         }
         String[] history = tasks.getLast().split(",");
         for (String string : history) {
@@ -217,6 +220,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         }
         bufferedReader.close();
+        //fileBackedTaskManager.restorePrioritizedTasks();
         return fileBackedTaskManager;
     }
 

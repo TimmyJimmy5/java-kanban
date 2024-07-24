@@ -34,15 +34,25 @@ public class Main {
         manager.searchTaskById(1);
         System.out.println(manager.searchEpicById(3));
         manager.searchSubtaskById(5);
+        System.out.println("=== Сохранение в файл выполнено успешно. ===");
         System.out.println("=== Начинаю блок загрузки из файла ===");
         /*Этот блок посвящен загрузке из файла. Суть в том, чтобы увидеть новую задачу с ИД (крайняя задача+1).
          А также проверка работы загрузки из файла. */
         FileBackedTaskManager managerLoad = new FileBackedTaskManager(file);
         managerLoad = managerLoad.loadFromFile(file);
-        managerLoad.createTask(new Task("Построить портал.", "Камень я дам.", TaskStatus.NEW, 30, "14:00 28.07.2024"));
+        managerLoad.createTask(new Task("Построить портал.", "Камень я дам.", TaskStatus.NEW, 30, "14:00 27.07.2024"));
         System.out.println("\n" + managerLoad.getAllTasks() + "\n" + managerLoad.getAllEpics() + "\n" + managerLoad.getAllSubtasks());
         System.out.println("=== Показываю историю ===");
         System.out.println(managerLoad.getHistory());
-
+        managerLoad.createTask(new Task("Построить портал 2.", "Камень я дам.", TaskStatus.NEW));
+        System.out.println(managerLoad.searchTaskById(11));
+        System.out.println("=== Показываю сортировку ===");
+        System.out.println(managerLoad.getPrioritizedTasks());
+        System.out.println("=== Проверка удаления таски ИД 1 и 9  ===");
+        managerLoad.removeTaskById(1);
+        managerLoad.removeSubtaskById(9);
+        System.out.println(managerLoad.getAllTasks() + "\n" + managerLoad.getAllEpics());
+        System.out.println("=== Показываю сортировку после удаления ===");
+        System.out.println(managerLoad.getPrioritizedTasks());
     }
 }

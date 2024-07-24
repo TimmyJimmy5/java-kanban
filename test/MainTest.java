@@ -12,7 +12,7 @@ class MainTest {
 
     @Test
     public void checkIfTaskManagerWorking(){
-        Task task = new Task("Lol", "Kek", TaskStatus.NEW);
+        Task task = new Task("Lol", "Kek", TaskStatus.NEW,  10, "12:00 24.07.2024");
         inMemoryTaskManager.createTask(task);
         assertNotNull(inMemoryTaskManager.getAllTasks(), "Таск менеджер не функционирует.");
     }

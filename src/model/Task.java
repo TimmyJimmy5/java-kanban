@@ -1,11 +1,13 @@
 package model;
 
+import service.InMemoryTaskManager;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Comparable<Task> {
     private final String name;
     private final String description;
     private int id;
@@ -25,6 +27,8 @@ public class Task {
         this.name = name;
         this.status = status;
         this.taskType = TaskType.TASK;
+        this.startTime = InMemoryTaskManager.getDEFAULT_DATE_TIME();
+        this.duration = Duration.ZERO;
     }
 
     public Task(String name, String description, TaskStatus status, int durationMins, String startDate) {
@@ -107,5 +111,17 @@ public class Task {
 
     public void setTaskType(TaskType taskType) {
         this.taskType = taskType;
+    }
+
+    public int compareTo(Task o) {
+        int value = -1;
+        if (o.getStartTime().isAfter(this.getStartTime())) {
+            value = -1;
+        } else if (o.getStartTime().isBefore(this.getStartTime())) {
+            value = 1;
+        } else {
+            value = 0;
+        }
+        return value;
     }
 }

@@ -31,10 +31,10 @@ public class FileBackedTaskManagerTest {
     @Test
     public void ifLoadFromFileWorks() throws IOException {
         manager = new FileBackedTaskManager(Paths.get(""), file.toPath());
-        Task task0 = new Task("lol", "kek", TaskStatus.NEW);
+        Task task0 = new Task("lol", "kek", TaskStatus.NEW,  10, "12:00 24.07.2024");
         Epic task1 = new Epic("epicLol", "epicKek", TaskStatus.NEW);
-        Subtask task2 = new Subtask("subLol", "subKek", TaskStatus.NEW, 1);
-        Subtask task3 = new Subtask("subLol1", "subKek1", TaskStatus.NEW, 1);
+        Subtask task2 = new Subtask("subLol", "subKek", TaskStatus.NEW, 1,  10, "12:00 25.07.2024");
+        Subtask task3 = new Subtask("subLol1", "subKek1", TaskStatus.NEW, 1, 10, "12:00 26.07.2024");
         manager.createTask(task0);
         manager.createEpic(task1);
         manager.createSubtask(task2);
@@ -51,10 +51,10 @@ public class FileBackedTaskManagerTest {
     @Test
     public void ifHistoryWorks() throws IOException {
         manager = new FileBackedTaskManager(Paths.get(""), file.toPath());
-        Task task0 = new Task("lol", "kek", TaskStatus.NEW);
+        Task task0 = new Task("lol", "kek", TaskStatus.NEW,  10, "12:00 24.07.2024");
         Epic task1 = new Epic("epicLol", "epicKek", TaskStatus.NEW);
-        Subtask task2 = new Subtask("subLol", "subKek", TaskStatus.NEW, 1);
-        Subtask task3 = new Subtask("subLol1", "subKek1", TaskStatus.NEW, 1);
+        Subtask task2 = new Subtask("subLol", "subKek", TaskStatus.NEW, 1,  10, "12:10 24.07.2024");
+        Subtask task3 = new Subtask("subLol1", "subKek1", TaskStatus.NEW, 1,  10, "12:20 24.07.2024");
         manager.createTask(task0);
         manager.createEpic(task1);
         manager.createSubtask(task2);
