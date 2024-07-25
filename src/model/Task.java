@@ -13,8 +13,8 @@ public class Task implements Comparable<Task> {
     private int id;
     private TaskStatus status;
     TaskType taskType;
-    Duration duration;
-    LocalDateTime startTime;
+    private Duration duration;
+    private LocalDateTime startTime;
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
