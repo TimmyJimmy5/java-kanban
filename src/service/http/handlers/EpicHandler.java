@@ -28,11 +28,19 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
                 case GET:
                     if (request.length == 3 && request[1].equals("epics")) {
                         int id = Integer.parseInt(request[2]);
-                        Epic epic = (Epic) getTaskManager().searchEpicById(id);
+                        Epic epic = getTaskManager().searchEpicById(id);
+                        if (epic == null) {
+                            sendNotFound(exchange);
+                            break;
+                        }
                         sendText(exchange, getGson().toJson(epic), 200);
                         break;
                     } else {
                         List<Epic> epics = getTaskManager().getAllEpics();
+                        if (epics == null) {
+                            sendNotFound(exchange);
+                            break;
+                        }
                         sendText(exchange, getGson().toJson(epics), 200);
                         break;
                     }
@@ -40,7 +48,11 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
                     Epic epic = getGson().fromJson(new InputStreamReader(exchange.getRequestBody(),
                             DEFAULT_CHARSET), Epic.class);
                     System.out.println(epic);
-                    if (epic.getId() == 0) {
+                    if (getTaskManager().getAllEpics() == null) {
+                        getTaskManager().createEpic(epic);
+                        sendText(exchange, "", 201);
+                        break;
+                    } else if (request.length == 2 && request[1].equals("epics")) {
                         getTaskManager().createEpic(epic);
                         sendText(exchange, "", 201);
                         break;

@@ -5,7 +5,6 @@ import model.TaskStatus;
 import service.FileBackedTaskManager;
 import exceptions.ManagerSaveException;
 import service.Managers;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -15,8 +14,6 @@ public class Main {
         Managers managers = new Managers();
         FileBackedTaskManager manager = managers.getDefaultFileBackedTaskManager();
         File file = new File("./src/service/TaskSaveFile1.csv");
-
-
 
         //Блок мейна, посвященный проверке сохранения в файл
         //FileBackedTaskManager manager = new FileBackedTaskManager(Paths.get(""), file.toPath());
@@ -61,7 +58,6 @@ public class Main {
         System.out.println(managerLoad.getAllTasks() + "\n" + managerLoad.getAllEpics());
         System.out.println("=== Показываю сортировку после удаления ===");
         System.out.println(managerLoad.getPrioritizedTasks());
-
     }
     */
 }

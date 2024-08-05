@@ -28,18 +28,30 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                 case GET:
                     if (request.length == 3 && request[1].equals("subtasks")) {
                         int id = Integer.parseInt(request[2]);
-                        Subtask subtask = (Subtask) getTaskManager().searchSubtaskById(id);
+                        Subtask subtask = getTaskManager().searchSubtaskById(id);
+                        if (subtask == null) {
+                            sendNotFound(exchange);
+                            break;
+                        }
                         sendText(exchange, getGson().toJson(subtask), 200);
                         break;
                     } else {
                         List<Subtask> subtasks = getTaskManager().getAllSubtasks();
+                        if (subtasks == null) {
+                            sendNotFound(exchange);
+                            break;
+                        }
                         sendText(exchange, getGson().toJson(subtasks), 200);
                         break;
                     }
                 case POST:
                     Subtask newSubtask = getGson().fromJson(new InputStreamReader(exchange.getRequestBody(),
                             DEFAULT_CHARSET), Subtask.class);
-                    if (newSubtask.getId() == 0) {
+                    if (getTaskManager().getAllSubtasks() == null) {
+                        getTaskManager().createSubtask(newSubtask);
+                        sendText(exchange, "", 201);
+                        break;
+                    } else if (request.length == 2 && request[1].equals("subtasks")) {
                         getTaskManager().createSubtask(newSubtask);
                         sendText(exchange, "", 201);
                         break;
