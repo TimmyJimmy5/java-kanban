@@ -55,4 +55,6 @@ public interface TaskManager {
     Set<Task> getPrioritizedTasks();
 
     void addToPrioritizedTasks(Task task);
+
+    int getCounter();
 }
