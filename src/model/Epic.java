@@ -1,15 +1,25 @@
 package model;
 
+import service.InMemoryTaskManager;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private final List<Integer> subtaskIds = new ArrayList<>();
+    private LocalDateTime endTime;
+    private Duration duration;
+    private LocalDateTime startTime;
 
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
         this.taskType = TaskType.EPIC;
+        this.startTime = InMemoryTaskManager.getDEFAULT_DATE_TIME();
+        this.duration = Duration.ZERO;
+        this.endTime = startTime.plusMinutes(duration.toMinutes());
     }
 
     public List<Integer> getSubtaskIds() {
@@ -24,8 +34,17 @@ public class Epic extends Task {
         }
     }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     public void removeSubtasksIds() {
         subtaskIds.clear();
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override
@@ -50,6 +69,9 @@ public class Epic extends Task {
                 ", ID=" + getId() +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
+                ", duration=" + getDuration() +
+                ", startTime=" + getStartTime() +
+                ", endTime=" + getEndTime() +
                 '}' + "\n";
     }
 }

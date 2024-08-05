@@ -91,7 +91,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             if (task.getTaskType() != null) {
                 if (task.getTaskType() == TaskType.TASK) {
-                    return String.format("%d,%S,%s,%S,%s", task.getId(), task.getTaskType(), task.getName(), task.getStatus(), task.getDescription());
+                    return String.format("%d,%S,%s,%S,%s,%s,%s", task.getId(), task.getTaskType(), task.getName(), task.getStatus(), task.getDescription(), task.getDuration().toMinutes(), task.getStartTime().format(Task.DATE_TIME_FORMATTER));
                 } else if (task.getTaskType() == TaskType.EPIC) {
                     Epic epic = (Epic) task;
                     StringBuilder sb = new StringBuilder();
@@ -103,7 +103,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     return String.format("%d,%S,%s,%S,%s,%s", epic.getId(), epic.getTaskType(), epic.getName(), epic.getStatus(), epic.getDescription(), subtaskIDs);
                 } else if (task.getTaskType() == TaskType.SUBTASK) {
                     Subtask subtask = (Subtask) task;
-                    return String.format("%d,%S,%s,%S,%s,%s", subtask.getId(), subtask.getTaskType(), subtask.getName(), subtask.getStatus(), subtask.getDescription(), subtask.getEpicId());
+                    return String.format("%d,%S,%s,%S,%s,%s,%s,%s", subtask.getId(), subtask.getTaskType(), subtask.getName(), subtask.getStatus(), subtask.getDescription(), subtask.getEpicId(), subtask.getDuration().toMinutes(), subtask.getStartTime().format(Task.DATE_TIME_FORMATTER));
                 }
             }
         } catch (IllegalArgumentException exception) {
@@ -130,7 +130,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             switch (TaskType.valueOf(task[1])) {
                 case TASK:
                     taskStatus = TaskStatus.valueOf(task[3]);
-                    returnedTask = new Task(task[2], task[4], taskStatus);
+                    returnedTask = new Task(task[2], task[4], taskStatus, Integer.parseInt(task[5]), task[6]);
                     returnedTask.setId(Integer.parseInt(task[0]));
                     returnedTask.setTaskType(TaskType.valueOf(task[1]));
                     setIdCounter(returnedTask);
@@ -144,7 +144,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     return returnedTask;
                 case SUBTASK:
                     taskStatus = TaskStatus.valueOf(task[3]);
-                    returnedTask = new Subtask(task[2], task[4], taskStatus, Integer.parseInt(task[5]));
+                    returnedTask = new Subtask(task[2], task[4], taskStatus, Integer.parseInt(task[5]), Integer.parseInt(task[6]), task[7]);
                     returnedTask.setId(Integer.parseInt(task[0]));
                     returnedTask.setTaskType(TaskType.valueOf(task[1]));
                     setIdCounter(returnedTask);
@@ -200,6 +200,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             Task taskToReadFromFile = taskFromString(tasks.get(i));
             fileBackedTaskManager.autoloadPutTask(taskToReadFromFile);
             fileBackedTaskManager.setIdCounter(taskToReadFromFile);
+            if (taskToReadFromFile.getTaskType() != TaskType.EPIC) {
+                try {
+                    fileBackedTaskManager.addToPrioritizedTasks(taskToReadFromFile);
+                } catch (ManagerSaveException ex) {
+                    System.out.println("Задача не добавлена в сортированный список задач по времени");
+                }
+            }
         }
         String[] history = tasks.getLast().split(",");
         for (String string : history) {

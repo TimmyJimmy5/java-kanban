@@ -4,6 +4,7 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
+import java.util.Set;
 
 import java.util.List;
 
@@ -50,4 +51,8 @@ public interface TaskManager {
     void changeTaskOrSubtaskStatus(int id, TaskStatus status);
 
     List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
+
+    void addToPrioritizedTasks(Task task);
 }

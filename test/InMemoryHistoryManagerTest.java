@@ -35,9 +35,9 @@ class InMemoryHistoryManagerTest {
     @Test
     public void isHistoryObjectsAreCorrect() {
 
-        Task task = new Task("Abc", "Def", TaskStatus.NEW);
+        Task task = new Task("Abc", "Def", TaskStatus.NEW,  10, "12:00 24.07.2024");
         Epic taskE = new Epic("Abc1", "Def1", TaskStatus.NEW);
-        Subtask taskS = new Subtask("Abc2", "Def2", TaskStatus.NEW, 1);
+        Subtask taskS = new Subtask("Abc2", "Def2", TaskStatus.NEW, 1,  10, "12:00 25.07.2024");
 
         inMemoryTaskManager.createTask(task);
         inMemoryTaskManager.createEpic(taskE);
@@ -66,9 +66,9 @@ class InMemoryHistoryManagerTest {
     @Test
     public void isHistoryWrittenAndDeleted() {
 
-        Task task = new Task("Abc", "Def", TaskStatus.NEW);
+        Task task = new Task("Abc", "Def", TaskStatus.NEW,  10, "12:00 24.07.2024");
         Epic taskE = new Epic("Abc1", "Def1", TaskStatus.NEW);
-        Subtask taskS = new Subtask("Abc2", "Def2", TaskStatus.NEW, 1);
+        Subtask taskS = new Subtask("Abc2", "Def2", TaskStatus.NEW, 1,  10, "12:00 25.07.2024");
 
         inMemoryTaskManager.createTask(task);
         inMemoryTaskManager.createEpic(taskE);
