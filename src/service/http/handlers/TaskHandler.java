@@ -47,7 +47,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                     }
                 case POST:
                     Task newTask = getGson().fromJson(new InputStreamReader(exchange.getRequestBody(),
-                            DEFAULT_CHARSET), Task.class);
+                            defaultCharset), Task.class);
                     if (getTaskManager().getAllTasks() == null) {
                         getTaskManager().createTask(newTask);
                         sendText(exchange, "", 201);

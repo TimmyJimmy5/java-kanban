@@ -46,7 +46,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                     }
                 case POST:
                     Subtask newSubtask = getGson().fromJson(new InputStreamReader(exchange.getRequestBody(),
-                            DEFAULT_CHARSET), Subtask.class);
+                            defaultCharset), Subtask.class);
                     if (getTaskManager().getAllSubtasks() == null) {
                         getTaskManager().createSubtask(newSubtask);
                         sendText(exchange, "", 201);

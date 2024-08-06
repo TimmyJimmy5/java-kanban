@@ -13,7 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class BaseHttpHandler {
-    protected final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    protected final Charset defaultCharset = StandardCharsets.UTF_8;
     private final TaskManager taskManager;
 
     public BaseHttpHandler(TaskManager taskManager) {
@@ -32,7 +32,7 @@ public class BaseHttpHandler {
     }
 
     protected void sendText(HttpExchange httpExchange, String text, int statusCode) throws IOException {
-        byte[] response = text.getBytes(DEFAULT_CHARSET);
+        byte[] response = text.getBytes(defaultCharset);
         httpExchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
         httpExchange.sendResponseHeaders(statusCode, response.length);
         try (OutputStream os = httpExchange.getResponseBody()) {

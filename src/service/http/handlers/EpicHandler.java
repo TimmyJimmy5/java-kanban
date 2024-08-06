@@ -46,7 +46,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
                     }
                 case POST:
                     Epic epic = getGson().fromJson(new InputStreamReader(exchange.getRequestBody(),
-                            DEFAULT_CHARSET), Epic.class);
+                            defaultCharset), Epic.class);
                     System.out.println(epic);
                     if (getTaskManager().getAllEpics() == null) {
                         getTaskManager().createEpic(epic);
