@@ -57,7 +57,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
                         sendText(exchange, "", 201);
                         break;
                     } else {
-                        getTaskManager().changeEpic(epic.getId() ,epic);
+                        getTaskManager().changeEpic(epic.getId(), epic);
                         sendText(exchange, "", 201);
                         break;
                     }
