@@ -4,8 +4,9 @@ import com.sun.net.httpserver.HttpServer;
 import exceptions.ManagerSaveException;
 
 import model.Task;
+import model.Epic;
+import model.Subtask;
 import model.TaskStatus;
-import service.FileBackedTaskManager;
 import service.Managers;
 import service.TaskManager;
 import service.http.handlers.EpicHandler;
@@ -14,7 +15,7 @@ import service.http.handlers.SubtaskHandler;
 import service.http.handlers.TaskHandler;
 import service.http.handlers.PrioritizedHandler;
 
-import java.io.File;
+//import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -34,8 +35,9 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws ManagerSaveException, IOException {
         Managers managers = new Managers();
-        File file = new File("./src/service/TaskSaveFile1.csv");
-        TaskManager tm = managers.getDefaultFileBackedTaskManagerFromFile(file);
+        //File file = new File("./src/service/TaskSaveFile1.csv");
+        //TaskManager tm = managers.getDefaultFileBackedTaskManagerFromFile(file);
+        TaskManager tm = managers.getDefault();
         HttpTaskServer httpTaskServer = new HttpTaskServer(tm);
 
         httpTaskServer.start();
@@ -46,6 +48,13 @@ public class HttpTaskServer {
         tm.createTask(testTask1);
         tm.createTask(testTask2);
         tm.createTask(testTask3);
+        tm.createEpic(new Epic("Построить зиккурат.", "Жизнь за Нер'Зула", TaskStatus.NEW));
+        tm.createEpic(new Epic("Построить казарму.", "Здесь нельзя строить", TaskStatus.NEW));
+        tm.createSubtask(new Subtask("Нужно больше золота.", "Построить рудники.", TaskStatus.NEW, 3, 30, "12:00 23.07.2024"));
+        tm.createSubtask(new Subtask("Нужно больше дерева.", "Рубить лес.", TaskStatus.IN_PROGRESS, 3, 30, "12:30 23.07.2024"));
+        tm.createSubtask(new Subtask("Нужно больше еды.", "Печем булки!.", TaskStatus.DONE, 3, 30, "13:00 23.07.2024"));
+        tm.createSubtask(new Subtask("Нужно расчистить площадку", "Вырубим лес.", TaskStatus.DONE, 4, 30, "13:30 23.07.2024"));
+        tm.createSubtask(new Subtask("Нужно немного подумать", "Но это не точно", TaskStatus.DONE, 4, 30, "14:00 23.07.2024"));
     }
 
     public void start() throws IOException {
@@ -62,9 +71,5 @@ public class HttpTaskServer {
     public void stop() {
         httpServer.stop(0);
         System.out.println("HTTP-сервер на " + PORT + " порту остановлен!");
-    }
-
-    public HttpServer getHttpServer() {
-        return httpServer;
     }
 }

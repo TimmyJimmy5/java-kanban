@@ -8,7 +8,7 @@ public enum HttpMethods {
 
         private final String method;
 
-        private HttpMethods(String method) {
+    HttpMethods(String method) {
             this.method = method;
         }
     }
